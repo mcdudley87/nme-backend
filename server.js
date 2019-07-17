@@ -24,11 +24,12 @@ app.get('/gameconsoles', (req, res) => {
 })
 
 app.get('/gameconsoles/:id', (req, res) => {
-	GameConsole.findById(req.params.id, function(err, gameConsole) {
-		if (err) {
-			res.json(err)
+	GameConsole.findById(req.params.id).populate('games').exec( (err, gameConsole) => {
+		if (!err) {
+			res.status(200).json(gameConsole);
+		} else {
+		res.status(500).json(err);
 		}
-		res.json(gameConsole)
 	})
 })
 
@@ -43,6 +44,19 @@ app.post('/gameconsoles', (req, res) => {
 		res.json(gameConsole)
 	})
 })
+
+// app.post('/gameconsoles', (req, res) => {
+// 	GameConsole.create({
+// 		make: req.body.make,
+// 		model: req.body.model,
+// 		games: req.body.game
+// 	});
+// 		gameconsole.save((err, gameconsole) => {
+// 			res.status(201).json(gameconsole);
+// 	});
+// })
+
+
 
 // app.post('/gameconsoles', (req, res) => {
 // 	GameConsole.create({
@@ -65,6 +79,21 @@ app.put('/gameconsoles/:id', (req, res) => {
 		res.json(gameConsoles)
 	})
 })
+
+// app.put('/gameconsoles/:id', (req, res) => {
+// 	GameConsole.findByIdAndUpdate(req.params.id, {
+// 		make: req.body.make,
+// 		model: req.body.model
+
+// 	}, function(err, gameConsole) {
+// 		if (err) res.json(err)
+// 		res.json(gameConsoles)
+// 	})
+// })
+
+
+
+
 
 
 //DELETE route
@@ -89,7 +118,7 @@ app.delete("/gameconsoles", (req, res) => {
 
 
 //GET
-app.get('/game/:id', (req, res) => {
+app.get('gameconsoles/:id/game/:id', (req, res) => {
 	Game.findById(req.params.id, function(err, game) {
 		if (err) {
 			res.json(err)
@@ -137,9 +166,9 @@ app.delete("/games", (req, res) => {
 
 //ORRRR???//
 // vv that shit down vv there is in process and not done.
-app.delete("/game/:id", (req, res) => {
-	Game.findById(req.params.id, function(err, game) {
-		GameConsole.findById(req.body.id, function(err, gameConsole) {
+app.delete("/game/:gid", (req, res) => {
+	Game.findById(req.params.gid, function(err, game) {
+		GameConsole.findById(req.body.gcid, function(err, gameConsole) {
 			Game.GameConsole.push(GameConsole);
 			Game.save( function (err ) {
 				GameConsole.Games.push(game);
@@ -155,3 +184,38 @@ app.delete("/game/:id", (req, res) => {
 app.listen(42069, function () {
 	console.log('The Ghost in the Machine Can Hear Your Thoughts...')
 });
+
+
+//=====================================STEVE SOLUTIONS==============//
+//Game post route, Steve's way
+
+// app.post('/gameconsoles/:gcid/games', (req, res) => {
+// 	GameConsole.findById(req.params.gcid, (err, gameconsoles) => {
+// 		let newGame = new Game ({
+// 			title: req.body.title,
+// 			year: req.body.year
+// 		});
+// 		newGame.save((err, game) => {
+// 			gameconsole.games.push(game._id);
+// 			gameconsole.save((err, gameconsole) => {
+// 				res.status(200).json(gameconsole);
+// 			})
+// 		})
+// 	})
+// })
+
+// GAME DELETE ROUTE
+
+
+// app.delete('/gameconsoles/:gcid/games/:gid', (req, res) => {
+// 	GameConsole.findById(req.params.gcid, (err, gameconsole) => {
+// 		gameconsole.games.pull(req.params.gid)
+// 		gameconsole.save(err => {
+// 			if (err) res.json(err)
+// 			Game.deleteOne({_id: req.params.gid}, err => {
+// 				if (err) res.json(err)
+// 				res.json(1);
+// 			})
+// 		})
+// 	})
+// })

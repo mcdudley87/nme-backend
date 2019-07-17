@@ -23,7 +23,7 @@ app.get('/gameconsoles', (req, res) => {
   })
 })
 
-app.get('/gameconsoles/:id', (req, res) => {
+app.get('/gameconsoles/:gcid', (req, res) => {
 	GameConsole.findById(req.params.id).populate('games').exec( (err, gameConsole) => {
 		if (!err) {
 			res.status(200).json(gameConsole);
@@ -73,7 +73,7 @@ app.post('/gameconsoles', (req, res) => {
 
 // UPDATE route
 
-app.put('/gameconsoles/:id', (req, res) => {
+app.put('/gameconsoles/:gcid', (req, res) => {
 	GameConsole.findByIdAndUpdate(req.params.id, {}, function(err, gameConsole) {
 		if (err) res.json(err)
 		res.json(gameConsoles)
@@ -118,7 +118,7 @@ app.delete("/gameconsoles", (req, res) => {
 
 
 //GET
-app.get('gameconsoles/:id/game/:id', (req, res) => {
+app.get('gameconsoles/:gcid/game/:gid', (req, res) => {
 	Game.findById(req.params.id, function(err, game) {
 		if (err) {
 			res.json(err)
@@ -139,7 +139,7 @@ app.post('/game', (req, res) => {
 
 // OOORRRR?????? //
 //all routes should look more like this syntax.
-app.post("/game/:id", (req, res) => {
+app.post("/game/:gid", (req, res) => {
 	Game.findById(req.params.id, function(err, game) {
 		GameConsole.findById(req.body.id, function(err, gameConsole) {
 			Game.GameConsole.push(GameConsole);
@@ -181,7 +181,7 @@ app.delete("/game/:gid", (req, res) => {
 	})
 })
 
-app.listen(42069, function () {
+app.listen(3001, function () {
 	console.log('The Ghost in the Machine Can Hear Your Thoughts...')
 });
 
